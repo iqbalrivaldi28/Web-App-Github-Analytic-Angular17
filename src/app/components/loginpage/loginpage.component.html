@@ -1,0 +1,81 @@
+<!-- <div
+  class="container-fluid d-flex justify-content-center align-items-center"
+  style="height: 100vh; background-color: #24292e"
+>
+  <div class="card" style="width: 400px">
+    <div class="card-body text-center">
+      <h5 class="card-title mb-3">Login Menggunakan Token Github Yaa</h5>
+      <form class="form-floating mb-4" (ngSubmit)="onLogin()">
+        <input
+          type="text"
+          id="token"
+          name="token"
+          [(ngModel)]="token"
+          required
+          class="mb-3"
+        />
+        <button type="submit" class="btn btn-dark" style="width: 200px">
+          Masuk
+        </button>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+<div class="container-fluid" style="background-color: #24292e">
+  >
+  <div class="container">
+    <div
+      class="row justify-content-center align-items-center"
+      style="min-height: 100vh"
+    >
+      <div class="col-xl-10 col-lg-12 col-md-9">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <div class="row">
+              <div class="col-lg-4 d-none d-lg-block">
+                <img
+                  src="../../../assets/logo-github.jpg"
+                  alt=""
+                  style="width: 330px"
+                />
+              </div>
+              <div class="col-lg-8">
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">Github App Login</h1>
+                  </div>
+                  <form class="user text-center" (ngSubmit)="onLogin()">
+                    <input
+                      id="token"
+                      name="token"
+                      type="text"
+                      class="form-control form-control-user"
+                      placeholder="Masukan Token Github"
+                      [(ngModel)]="token"
+                      required
+                    />
+
+                    <button
+                      type="submit"
+                      class="btn fw-bold mt-3"
+                      style="
+                        width: 500px;
+                        background-color: black;
+                        color: white;
+                        border-radius: 20px;
+                      "
+                    >
+                      Masuk
+                    </button>
+                  </form>
+                  <p class="mt-3 text-center">Created By: M. Iqbal Rivaldi</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

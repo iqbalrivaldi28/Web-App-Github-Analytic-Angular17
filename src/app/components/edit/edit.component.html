@@ -1,0 +1,32 @@
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-body">
+      <h3 class="card-title">Edit Profile</h3>
+      <form (ngSubmit)="submitForm()">
+        <div class="mb-3">
+          <label for="inputName" class="form-label">Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="inputName"
+            placeholder="Enter your name"
+            [(ngModel)]="newName"
+            name="newName"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="inputBio" class="form-label">Bio</label>
+          <textarea
+            class="form-control"
+            id="inputBio"
+            rows="3"
+            placeholder="Enter your bio"
+            [(ngModel)]="newBio"
+            name="newBio"
+          ></textarea>
+        </div>
+        <button type="submit" class="btn btn-outline-dark">Edit Data</button>
+      </form>
+    </div>
+  </div>
+</div>

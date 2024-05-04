@@ -1,0 +1,99 @@
+<nav class="navbar navbar-expand-lg shadow fixed-top mb-5">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/dashboard">Github App</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link active" aria-current="page" routerlink="/dashboard"
+          >Profile</a
+        >
+        <a class="nav-link" routerLink="/analiitk">Analytics</a>
+        <button
+          class="btn btn-outline-dark"
+          style="width: 130px"
+          (click)="removeToken()"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-5 pt-5">
+  <div class="row">
+    <div class="col-lg-4 col-md-6 col-sm-12 text-center mb-4">
+      <div class="card shadow">
+        <div class="card-body">
+          <img
+            src="{{ userData?.avatar_url }}"
+            alt="Profile Picture"
+            class="card-img-top rounded-circle"
+            style="width: 215px; height: 215px"
+          />
+          <h3 class="card-title">{{ userData.name }}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8 col-md-6 col-sm-12">
+      <div class="card shadow">
+        <div class="card-body" style="height: auto">
+          <h5 class="card-title">Bio:</h5>
+          <p class="card-text">{{ userData.bio }}</p>
+          <div class="row mt-5">
+            <div class="col-md-4">
+              <h3>{{ userData.followers }} followers</h3>
+            </div>
+            <div class="col-md-4">
+              <h3>{{ userData.following }} following</h3>
+            </div>
+            <div class="col-md-4">
+              <h3>{{ userData.public_repos }} Repository</h3>
+            </div>
+          </div>
+          <button
+            class="btn btn-dark mt-5"
+            style="width: 200px"
+            (click)="navigateToEditProfile()"
+          >
+            Edit Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card shadow mb-5">
+    <div class="card-body">
+      <h3 class="card-title mt-3 mb-3 text-center">Repository</h3>
+      <div class="row">
+        <div
+          class="col-lg-3 col-md-6 mb-4"
+          *ngFor="let repo of userRepositories"
+        >
+          <div class="card h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ repo.name }}</h5>
+              <p class="card-text">{{ repo.description }}</p>
+              <a href="{{ repo.html_url }}" class="btn btn-outline-dark mt-auto"
+                >Go to Repo</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
