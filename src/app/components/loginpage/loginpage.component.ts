@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { GithubService } from '../../services/github.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TokenService } from '../../services/token.service';
 
 @Component({
   selector: 'app-loginpage',
@@ -16,18 +15,14 @@ import { TokenService } from '../../services/token.service';
 export class LoginpageComponent {
   token: string = '';
 
-  constructor(
-    private router: Router,
-    private githubService: GithubService,
-    private tokenService: TokenService
-  ) {}
+  constructor(private router: Router, private githubService: GithubService) {}
 
   onLogin() {
-    this.githubService.getUserInfo(this.token).subscribe((userData) => {
+    localStorage.setItem('token', this.token);
+    this.githubService.getUserInfo().subscribe((userData) => {
       if (userData) {
-        this.tokenService.setToken(this.token);
-        localStorage.setItem('token', this.token);
         this.router.navigate(['/dashboard']);
+        console.log(this.token);
       } else {
         alert('Token anda tidak Valid Kawan!');
       }

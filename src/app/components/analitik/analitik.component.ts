@@ -13,83 +13,47 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class AnalitikComponent {
   chart: any = [];
+  repoCommit: any[] = [];
+  repo: any[] = [];
 
   constructor(private router: Router, private githubService: GithubService) {}
+
+  ngOnInit(): void {
+    this.getRepos();
+  }
 
   removeToken() {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
 
-  // ngOnInit(): void {
-  //   const token = localStorage.getItem('token');
-  //   if (token) {
-  //     this.githubService.getRepositoryAnalytics(token).subscribe(
-  //       () => {
-  //         console.log('Repository analytics retrieved successfully');
-  //       },
-  //       (error) => {
-  //         console.error('Error retrieving repository analytics:', error);
-  //       }
-  //     );
-  //   } else {
-  //     this.router.navigate(['/login']);
-  //   }
-  // }
-
-  //? Batas
-  // ngOnInit(): void {
-  //   const token = localStorage.getItem('token');
-  //   const repoName = 'API-Perpusku';
-
-  //   if (token) {
-  //     this.githubService.getRepositoryAnalytics(token, repoName).subscribe({
-  //       next: (data) => {
-  //         console.log(data);
-  //       },
-  //       error: (err: HttpErrorResponse) => {
-  //         console.log(err);
-  //       },
-  //     });
-  //   } else {
-  //     this.router.navigate(['/login']);
-  //   }
-  // }
-  //? Batas
-  repoCommit: any[] = [];
-  repo: any[] = [];
-
   getRepos() {
-    this.githubService
-      .getUserRepositories(localStorage.getItem('token') as string)
-      .subscribe({
-        next: (data) => {
-          this.repo = data;
-          this.getAllRepoCommit(data);
-          console.log('repos', data);
-        },
-      });
+    this.githubService.getUserRepositories().subscribe({
+      next: (data) => {
+        this.repo = data;
+        this.getAllRepoData(data);
+        console.log('repos', data);
+      },
+    });
   }
 
-  getAllRepoCommit(data: any[]) {
-    console.log('param', data);
+  getAllRepoData(data: any[]) {
     const token = localStorage.getItem('token') as string;
-    let repoName = data.filter((x) => x.name !== 'kasir_cerdas');
-    console.log('rnme', repoName);
-    // this.getRepos();
+    const repoName = data.filter((x) => x.name !== 'kasir_cerdas');
+    let count = 0;
     repoName.forEach((repo) => {
-      this.githubService.getRepositoryAnalytics(token, repo.name).subscribe({
+      this.githubService.getRepositoryAnalytics(repo.name).subscribe({
         next: (data) => {
-          // this.createChart(data);
-          // console.log('data:', data);
+          count++;
           const commit = data.length;
           this.repoCommit.push({
             nameRepo: repo.name,
             commit: commit,
           });
 
-          if (this.repoCommit.length === repoName.length) {
-            this.createChart();
+          if (count === repoName.length) {
+            this.createCommitChart();
+            this.getAllLanguages(repoName);
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -99,107 +63,34 @@ export class AnalitikComponent {
     });
   }
 
-  ngOnInit(): void {
-    this.getRepos();
-    // this.getAllRepoCommit();
+  getAllLanguages(data: any[]) {
+    let count = 0;
+    data.forEach((repo) => {
+      this.githubService.getLanguagesForRepository(repo.name).subscribe({
+        next: (languages) => {
+          count++;
+          this.repoCommit.find(
+            (item) => item.nameRepo === repo.name
+          ).languages = Object.keys(languages);
+          this.repoCommit.find((item) => item.nameRepo === repo.name).counts =
+            Object.values(languages);
 
-    // if (token) {
-    //   this.githubService.getRepositoryAnalytics(token, repoName).subscribe({
-    //     next: (data) => {
-    //       this.createChart(data);
-    //       console.log('data:', data);
-    //     },
-    //     error: (err: HttpErrorResponse) => {
-    //       console.log(err);
-    //     },
-    //   });
-    // } else {
-    //   this.router.navigate(['/login']);
-    // }
+          if (count === data.length) {
+            this.createLanguageChart();
+          }
+        },
+        error: (err: HttpErrorResponse) => {
+          console.log(err);
+        },
+      });
+    });
   }
 
-  // private createChart(data: any[]): void {
-  //   const ctx = document.getElementById('repositoryChart') as HTMLCanvasElement;
-  //   const labels = data.map((commit) => new Date(commit.date).toLocaleString());
-  //   const dataCounts = data.map((commit) => 1); // Setiap commit dihitung sebagai 1
-
-  //   new Chart(ctx, {
-  //     type: 'bar',
-  //     data: {
-  //       labels: labels,
-  //       datasets: [
-  //         {
-  //           label: 'Commits Count',
-  //           data: dataCounts,
-  //           backgroundColor: 'rgba(75, 192, 192, 0.2)',
-  //           borderColor: 'rgba(75, 192, 192, 1)',
-  //           borderWidth: 1,
-  //         },
-  //       ],
-  //     },
-  //     options: {
-  //       scales: {
-  //         y: {
-  //           beginAtZero: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  //?
-  // private createChart(data: any[]): void {
-  //   const ctx = document.getElementById('repositoryChart') as HTMLCanvasElement;
-  //   const commitCounts = this.getCommitCountsByDate(data);
-
-  //   const labels = Object.keys(commitCounts);
-  //   const dataCounts = Object.values(commitCounts);
-
-  //   new Chart(ctx, {
-  //     type: 'bar',
-  //     data: {
-  //       labels: labels,
-  //       datasets: [
-  //         {
-  //           label: 'Commits Count',
-  //           data: dataCounts,
-  //           backgroundColor: 'rgba(75, 192, 192, 0.2)',
-  //           borderColor: 'rgba(75, 192, 192, 1)',
-  //           borderWidth: 1,
-  //         },
-  //       ],
-  //     },
-  //     options: {
-  //       scales: {
-  //         y: {
-  //           beginAtZero: true,
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-
-  // private getCommitCountsByDate(data: any[]): { [date: string]: number } {
-  //   const commitCounts: { [date: string]: number } = {};
-
-  //   data.forEach((commit) => {
-  //     const date = new Date(commit.date).toLocaleDateString();
-  //     commitCounts[date] = (commitCounts[date] || 0) + 1;
-  //   });
-
-  //   return commitCounts;
-  // }
-
-  private createChart(): void {
+  private createCommitChart(): void {
     const ctx = document.getElementById('repositoryChart') as HTMLCanvasElement;
-    // const commitCounts = this.getCommitCountsByDate(data); // Or: const totalCount = this.getTotalCommitCount(data);
-
-    // const labels = Object.keys(commitCounts); // or: ['Total Commits'];
-    // const dataCounts = Object.values(commitCounts); // or: [totalCount];
-
     const repoName = this.repoCommit.map((x) => x.nameRepo);
     console.log('cc', repoName);
-    const count = this.repoCommit.map((x) => x.commit);
+    const commitCount = this.repoCommit.map((x) => x.commit);
 
     new Chart(ctx, {
       type: 'bar',
@@ -207,8 +98,8 @@ export class AnalitikComponent {
         labels: repoName,
         datasets: [
           {
-            label: 'Commits Count', // Adjust label if needed
-            data: count,
+            label: 'Commits Count',
+            data: commitCount,
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
             borderWidth: 1,
@@ -225,18 +116,61 @@ export class AnalitikComponent {
     });
   }
 
-  private getCommitCountsByDate(data: any[]): { [date: string]: number } {
-    const commitCounts: { [date: string]: number } = {};
+  private createLanguageChart(): void {
+    const ctx = document.getElementById('languagesChart') as HTMLCanvasElement;
+    const labels: string[] = [];
+    const data: number[] = [];
 
-    data.forEach((commit) => {
-      const date = new Date(commit.date).toLocaleDateString('en-US', {
-        day: 'numeric',
-      }); // Format as 'DD'
-      commitCounts[date] = (commitCounts[date] || 0) + 1;
+    this.repoCommit.forEach((repo) => {
+      repo.languages.forEach((language: any, index: any) => {
+        const existingIndex = labels.indexOf(language);
+        if (existingIndex === -1) {
+          labels.push(language);
+          data.push(repo.counts[index]);
+        } else {
+          data[existingIndex] += repo.counts[index];
+        }
+      });
     });
 
-    return commitCounts;
+    new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.5)',
+              'rgba(54, 162, 235, 0.5)',
+              'rgba(255, 206, 86, 0.5)',
+              'rgba(75, 192, 192, 0.5)',
+              'rgba(153, 102, 255, 0.5)',
+              'rgba(255, 159, 64, 0.5)',
+              'rgba(128, 0, 128, 0.5)',
+              'rgba(0, 0, 255, 0.5)',
+              'rgba(255, 0, 0, 0.5)',
+              'rgba(0, 255, 0, 0.5)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)',
+              'rgba(128, 0, 128, 1)',
+              'rgba(0, 0, 255, 1)',
+              'rgba(255, 0, 0, 1)',
+              'rgba(0, 255, 0, 1)',
+            ],
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+      },
+    });
   }
-
-  //!Batas
 }
